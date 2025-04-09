@@ -1,0 +1,297 @@
+/// Codes For the signup screen 
+
+
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final controller = Get.find<SignUpController>();
+  GlobalKey<FormState> signUpKey = GlobalKey<FormState>();
+
+  signUpUser() {
+    if (signUpKey.currentState!.validate()) {
+      controller.validateSignUp();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.emailField.clear();
+      controller.passwordField.clear();
+      controller.firstNameField.clear();
+      controller.lastNameField.clear();
+      controller.userNameField.clear();
+      controller.phoneNumberField.clear();
+      controller.termsCheck.value = false;
+    });
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // AppBar.................................................................
+      appBar: ReAppbar(isStack: false, showBackButton: true),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: sPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              hSpacingMedium,
+
+              // Let's create your account........................................
+              Text(
+                "Let's create your account",
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              hSpacingMedium,
+              Form(
+                  key: signUpKey,
+                  child: Column(
+                    children: [
+                      // TextFormFields...............................................
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              style: Theme.of(context).textTheme.headlineSmall,
+                              controller: controller.firstNameField,
+                              validator: SignUpValidator.firstName,
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: cBorderRadius),
+                                  labelText: "First Name",
+                                  labelStyle:
+                                      Theme.of(context).textTheme.titleSmall,
+                                  prefixIcon: Icon(Iconsax.user)),
+                            ),
+                          ),
+                          wSpacingMedium,
+                          Expanded(
+                            child: TextFormField(
+                              style: Theme.of(context).textTheme.headlineSmall,
+                              controller: controller.lastNameField,
+                              validator: SignUpValidator.lastName,
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: cBorderRadius),
+                                  labelText: "Last Name",
+                                  labelStyle:
+                                      Theme.of(context).textTheme.titleSmall,
+                                  prefixIcon: Icon(Iconsax.user)),
+                            ),
+                          ),
+                        ],
+                      ),
+                      hSpacingSmall,
+                      TextFormField(
+                        style: Theme.of(context).textTheme.headlineSmall,
+                        controller: controller.userNameField,
+                        validator: SignUpValidator.username,
+                        decoration: InputDecoration(
+                            border:
+                                OutlineInputBorder(borderRadius: cBorderRadius),
+                            labelText: "Username",
+                            labelStyle: Theme.of(context).textTheme.titleSmall,
+                            prefixIcon: Icon(Iconsax.user_edit)),
+                      ),
+                      hSpacingSmall,
+                      TextFormField(
+                        style: Theme.of(context).textTheme.headlineSmall,
+                        controller: controller.emailField,
+                        validator: SignUpValidator.email,
+                        decoration: InputDecoration(
+                            border:
+                                OutlineInputBorder(borderRadius: cBorderRadius),
+                            labelText: "E-mail",
+                            labelStyle: Theme.of(context).textTheme.titleSmall,
+                            prefixIcon: Icon(Iconsax.direct)),
+                      ),
+                      hSpacingSmall,
+                      TextFormField(
+                        style: Theme.of(context).textTheme.headlineSmall,
+                        controller: controller.phoneNumberField,
+                        validator: SignUpValidator.phoneNumber,
+                        decoration: InputDecoration(
+                            border:
+                                OutlineInputBorder(borderRadius: cBorderRadius),
+                            labelText: "Phone Number",
+                            labelStyle: Theme.of(context).textTheme.titleSmall,
+                            prefixIcon: Icon(Iconsax.call)),
+                      ),
+                      hSpacingSmall,
+                      Obx(
+                        () => TextFormField(
+                          style: Theme.of(context).textTheme.headlineSmall,
+                          controller: controller.passwordField,
+                          validator: SignUpValidator.password,
+                          obscureText: controller.signUpPasswordCheck.value,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: cBorderRadius),
+                              labelText: "Password",
+                              labelStyle:
+                                  Theme.of(context).textTheme.titleSmall,
+                              prefixIcon: Icon(Iconsax.password_check),
+                              suffixIcon: GestureDetector(
+                                  onTap: () =>
+                                      controller.signUpPasswordCheck.value =
+                                          !controller.signUpPasswordCheck.value,
+                                  child: Icon(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      controller.signUpPasswordCheck.value
+                                          ? Iconsax.eye
+                                          : Iconsax.eye_slash))),
+                        ),
+                      ),
+                    ],
+                  )),
+              hSpacingMedium,
+
+              // Terms of use.....................................................
+              Row(
+                children: [
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: Obx(
+                      () => Checkbox(
+                          checkColor: whiteColor,
+                          activeColor: blueColor,
+                          value: controller.termsCheck.value,
+                          onChanged: (value) {
+                            controller.termsCheck.value =
+                                !controller.termsCheck.value;
+                          }),
+                    ),
+                  ),
+                  wSpacingSmall,
+                  Text.rich(TextSpan(children: [
+                    TextSpan(text: "I agree to  "),
+                    TextSpan(
+                        text: "Privacy Policy",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(
+                                decoration: TextDecoration.underline,
+                                decorationThickness: 1.3)),
+                    TextSpan(text: " and  "),
+                    TextSpan(
+                        text: "Terms of use",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(
+                                decoration: TextDecoration.underline,
+                                decorationThickness: 1.3))
+                  ]))
+                ],
+              ),
+
+              // Create Account ..................................................
+              hSpacingMedium,
+              GestureDetector(
+                onTap: signUpUser,
+                child: Container(
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                      borderRadius: cBorderRadius, color: blueColor),
+                  child: Center(
+                    child: Text("Create Account",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(color: whiteColor)),
+                  ),
+                ),
+              ),
+
+              // Or Sign Up With..................................................
+              hContainerSpacing,
+              // Login...........................................................
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text("Already have an account? "),
+                  MaterialButton(
+                    padding: EdgeInsets.zero,
+                    minWidth: 0,
+                    height: 0,
+                    onPressed: () => Get.offAll(() => LoginPage()),
+                    child: Text(
+                      "Login",
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge!
+                          .copyWith(color: blueColor, fontSize: 14),
+                    ),
+                  )
+                ],
+              ),
+              hSpacingMedium,
+
+              Padding(
+                padding: sPadding,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(child: ReDivider()),
+                    wContainerSpacing,
+                    Text("Or Sign up with"),
+                    wContainerSpacing,
+                    Flexible(child: ReDivider()),
+                  ],
+                ),
+              ),
+              // Google && FaceBook logo..........................................
+              hSpacingMedium,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () => controller.validateGoogleSignIn(context),
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: roundBorder,
+                        border: Border.all(
+                            width: 1,
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                      child: SizedBox(
+                          height: 25,
+                          width: 25,
+                          child: Image.asset(googleLogo)),
+                    ),
+                  ),
+                  wSpacingSmall,
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: roundBorder,
+                      border: Border.all(
+                          width: 1,
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                    child: SizedBox(
+                        height: 25,
+                        width: 25,
+                        child: Image.asset(faceBookLogo)),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

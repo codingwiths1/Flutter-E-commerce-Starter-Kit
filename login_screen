@@ -1,0 +1,260 @@
+/// Codes for the login screen
+
+
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  GlobalKey<FormState> loginKey = GlobalKey<FormState>();
+  SignUpController controller = Get.find<SignUpController>();
+
+  loginUser() {
+    if (loginKey.currentState!.validate()) {
+      controller.validateLogin();
+    }
+  }
+
+  autoFill() {
+    var localStorage = GetStorage();
+    if (controller.rememberMeCheck.value) {
+      controller.loginPasswordCheck.value = true;
+      controller.loginPasswordField.text = localStorage.read("PASSWORD");
+      controller.loginEmailField.text = localStorage.read("EMAIL");
+    }
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => autoFill());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.loginEmailField.clear();
+      controller.loginPasswordField.clear();
+    });
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: oPadding,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Image.asset(
+                wLogo,
+                height: 100,
+                width: imageWidthLarge,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              hSpacingMedium,
+              Text(
+                "Welcome back",
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              hSpacingSmall,
+              Text(
+                "Discover Limitless Choices and Unmatched Convenience",
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              hSpacingMedium,
+              Form(
+                  key: loginKey,
+                  child: Column(
+                    children: [
+                      // ............................Email............................//
+                      TextFormField(
+                        style: Theme.of(context).textTheme.headlineSmall,
+                        controller: controller.loginEmailField,
+                        validator: LoginValidate.email,
+                        decoration: InputDecoration(
+                          border:
+                              OutlineInputBorder(borderRadius: cBorderRadius),
+                          labelText: "Email",
+                          labelStyle: Theme.of(context).textTheme.titleSmall,
+                          prefixIcon: Icon(Iconsax.direct_right,
+                              color: Theme.of(context).colorScheme.primary),
+                        ),
+                      ),
+                      hSpacingSmall,
+
+                      //...........................Password............................//
+                      Obx(
+                        () => TextFormField(
+                          controller: controller.loginPasswordField,
+                          validator: LoginValidate.password,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                          obscureText: controller.loginPasswordCheck.value,
+                          decoration: InputDecoration(
+                              labelStyle:
+                                  Theme.of(context).textTheme.titleSmall,
+                              labelText: "Password",
+                              // labelStyle: Theme.of(context).textTheme.titleSmall,
+                              prefixIcon: Icon(Iconsax.password_check,
+                                  color: Theme.of(context).colorScheme.primary),
+                              suffixIcon: GestureDetector(
+                                onTap: () {
+                                  controller.loginPasswordCheck.value =
+                                      !controller.loginPasswordCheck.value;
+                                },
+                                child: Icon(
+                                    controller.loginPasswordCheck.value
+                                        ? Iconsax.eye
+                                        : Iconsax.eye_slash,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                              ),
+                              // hintText: "Password",
+                              // hintStyle: Theme.of(context).textTheme.titleSmall,
+                              border: OutlineInputBorder(
+                                  borderRadius: cBorderRadius)),
+                        ),
+                      ),
+                      hSpacingSmall,
+
+                      //..................Remember Me && Forget Password...............//
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: Obx(
+                                      () => Checkbox(
+                                          activeColor: blueColor,
+                                          checkColor: whiteColor,
+                                          value:
+                                              controller.rememberMeCheck.value,
+                                          onChanged: (value) {
+                                            controller.rememberMeCheck.value =
+                                                !controller
+                                                    .rememberMeCheck.value;
+                                          }),
+                                    )),
+                                SizedBox(width: 7),
+                                Text(
+                                  "Remember Me",
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                )
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                              child: GestureDetector(
+                            onTap: () => Get.offNamed("/ForgetPassword"),
+                            child: Text(
+                              "Forget Password?",
+                              style: Theme.of(context).textTheme.titleSmall,
+                              textAlign: TextAlign.end,
+                            ),
+                          ))
+                        ],
+                      ),
+                      hSpacingMedium,
+
+                      //..........................Sign in..............................//
+                      GestureDetector(
+                        onTap: loginUser,
+                        child: Container(
+                          padding: aPadding,
+                          decoration: BoxDecoration(
+                            borderRadius: cBorderRadius,
+                            color: blueColor,
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Sign in",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(color: whiteColor),
+                            ),
+                          ),
+                        ),
+                      ),
+                      hSpacingSmall,
+
+                      //..........................Create Account........................//
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, "/SignUpPage");
+                        },
+                        child: Container(
+                          padding: aPadding,
+                          decoration: BoxDecoration(
+                              borderRadius: cBorderRadius,
+                              border: Border.all(
+                                  width: 0.7,
+                                  color:
+                                      Theme.of(context).colorScheme.primary)),
+                          child: Center(
+                            child: Text("Create account",
+                                style: Theme.of(context).textTheme.titleMedium),
+                          ),
+                        ),
+                      )
+                    ],
+                  )),
+              hSpacingMedium,
+
+              //.......................... OrSign in..............................//
+              Row(
+                children: [
+                  Flexible(
+                      child: Divider(
+                    indent: 40,
+                    endIndent: 10,
+                    thickness: 0.5,
+                    color: Theme.of(context).colorScheme.primary,
+                  )),
+                  Text("Or Sign in With",
+                      style: Theme.of(context).textTheme.titleSmall),
+                  Flexible(
+                      child: Divider(
+                    indent: 10,
+                    endIndent: 40,
+                    thickness: 0.5,
+                    color: Theme.of(context).colorScheme.primary,
+                  ))
+                ],
+              ),
+              hSpacingMedium,
+
+              //........................... Sign in With Google || Facebook ............................//
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap:() =>  controller.validateGoogleSignIn(context),
+                    child: SignInWidget(
+                      imageString: googleLogo,
+                    ),
+                  ),
+                  wSpacingSmall,
+                  SignInWidget(imageString: faceBookLogo)
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
